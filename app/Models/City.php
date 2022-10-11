@@ -1,23 +1,23 @@
 <?php
 
-namespace App\Models;
+// namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+// use Illuminate\Database\Eloquent\Factories\HasFactory;
+// use Illuminate\Database\Eloquent\Model;
 
-class City extends Model
-{
-  use HasFactory;
+// class City extends Model
+// {
+//   use HasFactory;
 
-  public $guarded = ['id'];
+//   public $guarded = ['id'];
 
-  public function province()
-  {
-    return $this->belongsTo(Province::class);
-  }
+//   public function province()
+//   {
+//     return $this->belongsTo(Province::class);
+//   }
 
-  public function profile()
-  {
-    return $this->hasMany(Profile::class);
-  }
-}
+//   public function profile()
+//   {
+//     return $this->hasMany(Profile::class);
+//   }
+// }

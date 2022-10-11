@@ -9,6 +9,8 @@ class TuitionType extends Model
 {
   use HasFactory;
 
+  public $guarded = ['id'];
+
   public function diplomaEqualization()
   {
     return $this->hasMany(DiplomaEqualization::class);
