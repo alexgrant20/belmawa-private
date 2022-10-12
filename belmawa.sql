@@ -6,13 +6,15 @@ USE belmawa;
 
 CREATE TABLE users (
 	id INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    email VARCHAR(50) NOT NULL UNIQUE,
-    password VARCHAR(255) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    `password` VARCHAR(255) NOT NULL,
     attempt_login TINYINT DEFAULT 0,
     attempt_login_active DATETIME,
     last_login DATETIME,
     email_confirm_at DATETIME,
-    is_active TINYINT,
+    email_confirm_token VARCHAR(255),
+    email_temp VARCHAR(100) UNIQUE,
+    is_active TINYINT DEFAULT 1,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     created_by INT UNSIGNED NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -22,35 +24,21 @@ CREATE TABLE users (
 	FOREIGN KEY(updated_by) REFERENCES users(id) ON UPDATE CASCADE
 );
 
--- CREATE TABLE provinces (
--- 	id INT UNSIGNED NOT NULL AUTO_INCREMENT,
---     name VARCHAR(100) NOT NULL UNIQUE,
---     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
---     created_by INT UNSIGNED NOT NULL,
---     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
---     updated_by INT UNSIGNED NOT NULL,
---     PRIMARY KEY(id),
--- 	FOREIGN KEY(created_by) REFERENCES users(id) ON UPDATE CASCADE,
--- 	FOREIGN KEY(updated_by) REFERENCES users(id) ON UPDATE CASCADE
--- );
-
--- CREATE TABLE cities (
--- 	id INT UNSIGNED NOT NULL AUTO_INCREMENT,
---     name VARCHAR(100) NOT NULL UNIQUE,
---     province_id INT UNSIGNED NOT NULL,
---     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
---     created_by INT UNSIGNED NOT NULL,
---     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
---     updated_by INT UNSIGNED NOT NULL,
---     PRIMARY KEY(id),
--- 	FOREIGN KEY(created_by) REFERENCES users(id) ON UPDATE CASCADE,
--- 	FOREIGN KEY(updated_by) REFERENCES users(id) ON UPDATE CASCADE,
---     FOREIGN KEY(province_id) REFERENCES provinces(id) ON UPDATE CASCADE
--- );
+CREATE TABLE statuses (
+	id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(100) NOT NULL UNIQUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT UNSIGNED NOT NULL,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_by INT UNSIGNED NOT NULL,
+    PRIMARY KEY(id),
+	FOREIGN KEY(created_by) REFERENCES users(id) ON UPDATE CASCADE,
+	FOREIGN KEY(updated_by) REFERENCES users(id) ON UPDATE CASCADE
+);
 
 CREATE TABLE nationalities (
 	id INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    name VARCHAR(100) NOT NULL UNIQUE,
+	`name` VARCHAR(100) NOT NULL UNIQUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     created_by INT UNSIGNED NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -68,13 +56,12 @@ CREATE TABLE profiles (
     place_of_birth VARCHAR(255) NOT NULL,
     date_of_birth DATE NOT NULL,
     address VARCHAR(255) NOT NULL,
-   --  city_id INT UNSIGNED NOT NULL,
-    phone_number VARCHAR(50) NOT NULL,
+    phone_number VARCHAR(20) NOT NULL,
 	nationality_id INT UNSIGNED NOT NULL,
     identity_number VARCHAR(50) NOT NULL UNIQUE,
-    nidn VARCHAR(20) NOT NULL UNIQUE,
-    bank_account_number VARCHAR(50) NOT NULL,
-    bank_name VARCHAR(50) NOT NULL,
+    nidn VARCHAR(20) UNIQUE,
+    bank_account_number VARCHAR(50) UNIQUE,
+    bank_name VARCHAR(50),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     created_by INT UNSIGNED NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -83,14 +70,13 @@ CREATE TABLE profiles (
 	FOREIGN KEY(created_by) REFERENCES users(id) ON UPDATE CASCADE,
 	FOREIGN KEY(updated_by) REFERENCES users(id) ON UPDATE CASCADE,
 	FOREIGN KEY(user_id) REFERENCES users(id) ON UPDATE CASCADE,
-	-- FOREIGN KEY(city_id) REFERENCES cities(id) ON UPDATE CASCADE,
 	FOREIGN KEY(nationality_id) REFERENCES nationalities(id) ON UPDATE CASCADE
 );
 
 
 CREATE TABLE attachment_types (
 	id INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    name VARCHAR(100) NOT NULL,
+    name VARCHAR(20) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     created_by INT UNSIGNED NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -102,9 +88,7 @@ CREATE TABLE attachment_types (
 
 CREATE TABLE attachments (
 	id INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	-- UNIQUE (?) 
     label VARCHAR(100) NOT NULL UNIQUE,
-    -- UNIQUE (?) 
     name_input VARCHAR(100) NOT NULL UNIQUE,
     attachment_type_id INT UNSIGNED NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -120,8 +104,7 @@ CREATE TABLE attachments (
 CREATE TABLE attachment_placements (
 	id INT UNSIGNED NOT NULL AUTO_INCREMENT,
     attachment_id INT UNSIGNED NOT NULL,
-    -- UNIQUE (?)
-    slug VARCHAR(100) NOT NULL UNIQUE,
+    slug VARCHAR(100) NOT NULL,
     is_required TINYINT NOT NULL,
     is_active TINYINT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -138,7 +121,7 @@ CREATE TABLE attachment_upload_mappings (
 	id INT UNSIGNED NOT NULL AUTO_INCREMENT,
 	attachment_id INT UNSIGNED NOT NULL,
     ref_table VARCHAR(100) NOT NULL,
-    ref_id INT NOT NULL,
+    ref_id INT UNSIGNED NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     created_by INT UNSIGNED NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -166,7 +149,7 @@ CREATE TABLE attachment_uploads (
 	attachment_upload_mapping_id INT UNSIGNED NOT NULL,
 	file_location_id INT UNSIGNED NOT NULL,
     path VARCHAR(255) NOT NULL,
-    mimetype VARCHAR(50) NOT NULL,
+    mimetype VARCHAR(20) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     created_by INT UNSIGNED NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -178,23 +161,11 @@ CREATE TABLE attachment_uploads (
 	FOREIGN KEY(file_location_id) REFERENCES file_locations(id) ON UPDATE CASCADE
 );
 
-CREATE TABLE menu_groups (
-	id INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    name VARCHAR(100) NOT NULL UNIQUE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    created_by INT UNSIGNED NOT NULL,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_by INT UNSIGNED NOT NULL,
-    PRIMARY KEY(id),
-	FOREIGN KEY(created_by) REFERENCES users(id) ON UPDATE CASCADE,
-	FOREIGN KEY(updated_by) REFERENCES users(id) ON UPDATE CASCADE
-);
 
 CREATE TABLE permissions (
 	id INT UNSIGNED NOT NULL AUTO_INCREMENT,
 	name VARCHAR(100) NOT NULL UNIQUE,
 	slug VARCHAR(100) NOT NULL UNIQUE,
-    -- Nullable (?)
     description VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     created_by INT UNSIGNED NOT NULL,
@@ -207,11 +178,11 @@ CREATE TABLE permissions (
 
 CREATE TABLE menus (
 	id INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	menu_group_id INT UNSIGNED NOT NULL,
-	permission_id INT UNSIGNED NOT NULL,
-    name VARCHAR(100) NOT NULL UNIQUE,
+	parent_id INT UNSIGNED NOT NULL,
+    icon VARCHAR(100) NOT NULL,
+    label VARCHAR(100) NOT NULL UNIQUE,
     link VARCHAR(255) NOT NULL,
-    route VARCHAR(255) NOT NULL,
+    `order` SMALLINT NOT NULL,
     status TINYINT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     created_by INT UNSIGNED NOT NULL,
@@ -220,14 +191,28 @@ CREATE TABLE menus (
     PRIMARY KEY(id),
 	FOREIGN KEY(created_by) REFERENCES users(id) ON UPDATE CASCADE,
 	FOREIGN KEY(updated_by) REFERENCES users(id) ON UPDATE CASCADE,
-	FOREIGN KEY(menu_group_id) REFERENCES menu_groups(id) ON UPDATE CASCADE,
+	FOREIGN KEY(parent_id) REFERENCES menus(id) ON UPDATE CASCADE
+);
+
+CREATE TABLE menu_permissions (
+	id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+	menu_id INT UNSIGNED NOT NULL,
+	permission_id INT UNSIGNED NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT UNSIGNED NOT NULL,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_by INT UNSIGNED NOT NULL,
+    PRIMARY KEY(id),
+	FOREIGN KEY(created_by) REFERENCES users(id) ON UPDATE CASCADE,
+	FOREIGN KEY(updated_by) REFERENCES users(id) ON UPDATE CASCADE,
+	FOREIGN KEY(menu_id) REFERENCES menus(id) ON UPDATE CASCADE,
 	FOREIGN KEY(permission_id) REFERENCES permissions(id) ON UPDATE CASCADE
 );
 
 CREATE TABLE roles (
 	id INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    name VARCHAR(100) NOT NULL UNIQUE,
-    place VARCHAR(100) NOT NULL,
+    name VARCHAR(50) NOT NULL UNIQUE,
+    place VARCHAR(50) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     created_by INT UNSIGNED NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -271,7 +256,7 @@ CREATE TABLE faqs (
 	id INT UNSIGNED NOT NULL AUTO_INCREMENT,
     title VARCHAR(255) NOT NULL,
     content TEXT NOT NULL,
-    status TINYINT NOT NULL,
+    is_active TINYINT DEFAULT 1,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     created_by INT UNSIGNED NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -337,7 +322,7 @@ CREATE TABLE evaluator_specialities (
 
 CREATE TABLE forget_passwords (
 	id INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    otp VARCHAR(255) NOT NULL UNIQUE,
+	token VARCHAR(255) NOT NULL,
 	user_id INT UNSIGNED NOT NULL,
 	expired_at DATETIME NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -354,7 +339,6 @@ CREATE TABLE notifications (
 	id INT UNSIGNED NOT NULL AUTO_INCREMENT,
     title VARCHAR(255) NOT NULL,
     content TEXT NOT NULL,
-    -- Set default to 0 ? New Notif always unseen
     is_seen TINYINT DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     created_by INT UNSIGNED NOT NULL,
@@ -365,47 +349,47 @@ CREATE TABLE notifications (
 	FOREIGN KEY(updated_by) REFERENCES users(id) ON UPDATE CASCADE
 );
 
-CREATE TABLE required_documents (
-	id INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    ref_table VARCHAR(100) NOT NULL,
-    ref_id INT UNSIGNED NOT NULL,
-    attachment_id INT UNSIGNED NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    created_by INT UNSIGNED NOT NULL,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_by INT UNSIGNED NOT NULL,
-    PRIMARY KEY(id),
-	FOREIGN KEY(created_by) REFERENCES users(id) ON UPDATE CASCADE,
-	FOREIGN KEY(updated_by) REFERENCES users(id) ON UPDATE CASCADE,
-	FOREIGN KEY(attachment_id) REFERENCES attachments(id) ON UPDATE CASCADE
-);
+-- CREATE TABLE required_documents (
+-- 	id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+--     ref_table VARCHAR(100) NOT NULL,
+--     ref_id INT UNSIGNED NOT NULL,
+--     attachment_id INT UNSIGNED NOT NULL,
+--     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+--     created_by INT UNSIGNED NOT NULL,
+--     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+--     updated_by INT UNSIGNED NOT NULL,
+--     PRIMARY KEY(id),
+-- 	FOREIGN KEY(created_by) REFERENCES users(id) ON UPDATE CASCADE,
+-- 	FOREIGN KEY(updated_by) REFERENCES users(id) ON UPDATE CASCADE,
+-- 	FOREIGN KEY(attachment_id) REFERENCES attachments(id) ON UPDATE CASCADE
+-- );
 
-CREATE TABLE service_schedules (
-	id INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    start_date DATETIME NOT NULL,
-    end_date DATETIME NOT NULL,
-    description VARCHAR(255),
+-- CREATE TABLE service_schedules (
+-- 	id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+--     start_date DATETIME NOT NULL,
+--     end_date DATETIME NOT NULL,
+--     description VARCHAR(255),
+--     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+--     created_by INT UNSIGNED NOT NULL,
+--     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+--     updated_by INT UNSIGNED NOT NULL,
+--     PRIMARY KEY(id),
+-- 	FOREIGN KEY(created_by) REFERENCES users(id) ON UPDATE CASCADE,
+-- 	FOREIGN KEY(updated_by) REFERENCES users(id) ON UPDATE CASCADE
+-- );
+
+CREATE TABLE config (
+	id VARCHAR(255) NOT NULL,
+	name VARCHAR(255) NOT NULL UNIQUE,
+	description TEXT NOT NULL,
+	value INT NOT NULL, 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     created_by INT UNSIGNED NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_by INT UNSIGNED NOT NULL,
     PRIMARY KEY(id),
-	FOREIGN KEY(created_by) REFERENCES users(id) ON UPDATE CASCADE,
+	FOREIGN KEY(created_by) REFERENCES users(id) ON UPDATE RESTRICT,
 	FOREIGN KEY(updated_by) REFERENCES users(id) ON UPDATE CASCADE
-);
-
-CREATE TABLE service_level_agreements (
-	id INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	user_id INT UNSIGNED NOT NULL,
-    description VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    created_by INT UNSIGNED NOT NULL,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_by INT UNSIGNED NOT NULL,
-    PRIMARY KEY(id),
-	FOREIGN KEY(created_by) REFERENCES users(id) ON UPDATE CASCADE,
-	FOREIGN KEY(updated_by) REFERENCES users(id) ON UPDATE CASCADE,
-	FOREIGN KEY(user_id) REFERENCES users(id) ON UPDATE CASCADE
 );
 
 CREATE TABLE education_locations (
@@ -436,17 +420,14 @@ CREATE TABLE institutions (
 	id INT UNSIGNED NOT NULL AUTO_INCREMENT,
     country_id INT UNSIGNED NOT NULL,
     institution_type_id INT UNSIGNED NOT NULL,
-    -- 100 enough? unique?
-    name VARCHAR(100) NOT NULL UNIQUE,
-    -- 255 to much?
+    name VARCHAR(100) NOT NULL,
     address VARCHAR(255) NOT NULL,
-    -- 100 enough?
     city VARCHAR(100) NOT NULL,
-    -- unique?
-    postal_code VARCHAR(10) NOT NULL,
-    -- unique?
+    postal_code VARCHAR(20) NOT NULL,
     email VARCHAR(100) NOT NULL,
     website VARCHAR(255) NOT NULL,
+    is_active TINYINT DEFAULT 1,
+	inactive_date DATE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     created_by INT UNSIGNED NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -454,6 +435,7 @@ CREATE TABLE institutions (
     PRIMARY KEY(id),
 	FOREIGN KEY(created_by) REFERENCES users(id) ON UPDATE CASCADE,
 	FOREIGN KEY(updated_by) REFERENCES users(id) ON UPDATE CASCADE,
+	FOREIGN KEY(country_id) REFERENCES countries(id) ON UPDATE CASCADE,
 	FOREIGN KEY(institution_type_id) REFERENCES institution_types(id) ON UPDATE CASCADE
 );
 
@@ -474,7 +456,8 @@ CREATE TABLE institution_study_programs (
     institution_id INT UNSIGNED NOT NULL,
     study_program_id INT UNSIGNED NOT NULL,
     -- biasanya 1, karena study program baru (?)
-    status TINYINT DEFAULT 1,
+    -- is_active TINYINT DEFAULT 1,
+    -- inactive_date DATE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     created_by INT UNSIGNED NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -488,7 +471,6 @@ CREATE TABLE institution_study_programs (
 
 CREATE TABLE study_levels (
 	id INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    -- unique ?
     name VARCHAR(100) NOT NULL UNIQUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     created_by INT UNSIGNED NOT NULL,
@@ -504,10 +486,9 @@ CREATE TABLE academic_records (
 	study_level_id INT UNSIGNED NOT NULL,
 	education_location_id INT UNSIGNED NOT NULL,
 	institution_study_program_id INT UNSIGNED,
-    -- bukannya harus request dlu ya ?
     institution VARCHAR(100),
     study_program VARCHAR(100),
-    -- 50 cukup?
+    address VARCHAR(100),
     student_id VARCHAR(50) NOT NULL,
     graduate_year YEAR NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -522,19 +503,19 @@ CREATE TABLE academic_records (
 	FOREIGN KEY(institution_study_program_id) REFERENCES institution_study_programs(id) ON UPDATE CASCADE
 );
 
--- perlu unique/gak tergantung dari proposal bakal dihapus / gak ketika status selesai (ditolak/diterima)
 CREATE TABLE institution_proposals (
 	id INT UNSIGNED NOT NULL AUTO_INCREMENT,
 	country_id INT UNSIGNED NOT NULL,
+    user_id INT UNSIGNED NOT NULL,
     name VARCHAR(100) NOT NULL,
     institution_type_id INT UNSIGNED NOT NULL,
     address VARCHAR(255) NOT NULL,
     city VARCHAR(100) NOT NULL,
-    postal_code VARCHAR(10) NOT NULL,
+    postal_code VARCHAR(20) NOT NULL,
 	website VARCHAR(255) NOT NULL,
     email VARCHAR(100) NOT NULL,
     program_study_name VARCHAR(100) NOT NULL,
-    is_accepted TINYINT,
+    -- is_accepted TINYINT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     created_by INT UNSIGNED NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -542,6 +523,7 @@ CREATE TABLE institution_proposals (
     PRIMARY KEY(id),
 	FOREIGN KEY(created_by) REFERENCES users(id) ON UPDATE CASCADE,
 	FOREIGN KEY(updated_by) REFERENCES users(id) ON UPDATE CASCADE,
+	FOREIGN KEY(user_id) REFERENCES users(id) ON UPDATE CASCADE,
 	FOREIGN KEY(country_id) REFERENCES countries(id) ON UPDATE CASCADE,
 	FOREIGN KEY(institution_type_id) REFERENCES institution_types(id) ON UPDATE CASCADE
 );
@@ -563,9 +545,7 @@ CREATE TABLE study_program_proposals (
 	country_id INT UNSIGNED NOT NULL,
 	institution_id INT UNSIGNED NOT NULL,
 	name VARCHAR(100) NOT NULL,
-	degree_id INT UNSIGNED,
-	degree VARCHAR(100),
-    is_accepted TINYINT,
+    -- is_accepted TINYINT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     created_by INT UNSIGNED NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -574,8 +554,7 @@ CREATE TABLE study_program_proposals (
 	FOREIGN KEY(created_by) REFERENCES users(id) ON UPDATE CASCADE,
 	FOREIGN KEY(updated_by) REFERENCES users(id) ON UPDATE CASCADE,
 	FOREIGN KEY(country_id) REFERENCES countries(id) ON UPDATE CASCADE,
-	FOREIGN KEY(institution_id) REFERENCES institutions(id) ON UPDATE CASCADE,
-	FOREIGN KEY(degree_id) REFERENCES degrees(id) ON UPDATE CASCADE
+	FOREIGN KEY(institution_id) REFERENCES institutions(id) ON UPDATE CASCADE
 );
 
 CREATE TABLE directorate_types (
@@ -593,6 +572,9 @@ CREATE TABLE directorate_types (
 CREATE TABLE sk_templates (
 	id INT UNSIGNED NOT NULL AUTO_INCREMENT,
 	directorate_type_id INT UNSIGNED NOT NULL,
+    `name` VARCHAR(225) NOT NULL,
+    `description` TEXT,
+    template TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     created_by INT UNSIGNED NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -609,12 +591,11 @@ CREATE TABLE score_conversions (
     overseas_score_lower_limit FLOAT UNSIGNED NOT NULL,
     domestic_score_upper_limit FLOAT UNSIGNED NOT NULL,
     domestic_score_lower_limit FLOAT UNSIGNED NOT NULL,
-    grade_average_point FLOAT UNSIGNED NOT NULL,
-    -- Result not null ? langusng keluar kah?
+    grade_point_average FLOAT UNSIGNED,
     score_conversions_result FLOAT UNSIGNED NOT NULL,
-    parent_conversion_id INT UNSIGNED NOT NULL,
-    is_denied TINYINT DEFAULT 0,
-    finalize_at TIMESTAMP,
+    parent_conversion_id INT UNSIGNED,
+    is_accepted TINYINT,
+    -- finalize_at TIMESTAMP,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     created_by INT UNSIGNED NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -629,9 +610,7 @@ CREATE TABLE score_conversion_details (
 	id INT UNSIGNED NOT NULL AUTO_INCREMENT,
     score_conversion_id INT UNSIGNED NOT NULL,
     course_name VARCHAR(100) NOT NULL,
-    -- mending tiny(1) / small (4)
     credit SMALLINT NOT NULL,
-    -- int / float
     score FLOAT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     created_by INT UNSIGNED NOT NULL,
@@ -652,6 +631,7 @@ CREATE TABLE user_score_conversions (
 	institution_study_program_id INT UNSIGNED NOT NULL,
     degree_id INT UNSIGNED NOT NULL,
     directorate_type_id INT UNSIGNED NOT NULL,
+    status_id INT UNSIGNED NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     created_by INT UNSIGNED NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -663,7 +643,8 @@ CREATE TABLE user_score_conversions (
 	FOREIGN KEY(score_conversion_id) REFERENCES score_conversions(id) ON UPDATE CASCADE,
 	FOREIGN KEY(institution_study_program_id) REFERENCES institution_study_programs(id) ON UPDATE CASCADE,
 	FOREIGN KEY(degree_id) REFERENCES degrees(id) ON UPDATE CASCADE,
-	FOREIGN KEY(directorate_type_id) REFERENCES directorate_types(id) ON UPDATE CASCADE
+	FOREIGN KEY(directorate_type_id) REFERENCES directorate_types(id) ON UPDATE CASCADE,
+	FOREIGN KEY(status_id) REFERENCES statuses(id) ON UPDATE CASCADE
 );
 
 CREATE TABLE tuition_payments (
@@ -729,12 +710,10 @@ CREATE TABLE jobs (
 CREATE TABLE registration_numbers (
 	id INT UNSIGNED NOT NULL AUTO_INCREMENT,
     registration_number VARCHAR(50) NOT NULL UNIQUE,
-    -- buat apa?
     type VARCHAR(50) NOT NULL,
     ref_table VARCHAR(100) NOT NULL,
     ref_id INT NOT NULL,
-    -- bisa null ?
-    status TINYINT NOT NULL,
+    is_completed TINYINT DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     created_by INT UNSIGNED NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -749,8 +728,6 @@ CREATE TABLE logs (
     registration_number_id INT UNSIGNED NOT NULL,
     title VARCHAR(100) NOT NULL,
     description TEXT NOT NULL,
-    -- buat apa
-    note TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     created_by INT UNSIGNED NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -768,7 +745,7 @@ CREATE TABLE results (
 	study_level_id INT UNSIGNED NOT NULL,
     sk_number VARCHAR(50) NOT NULL,
     sk_date DATE NOT NULL,
-    status TINYINT NOT NULL,
+    is_active TINYINT DEFAULT 1,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     created_by INT UNSIGNED NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -798,37 +775,37 @@ CREATE TABLE conversion_results (
 	FOREIGN KEY(result_id) REFERENCES results(id) ON UPDATE CASCADE
 );
 
-CREATE TABLE reequalization_reasons (
-	id INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    -- cukup gak 100
-	reason VARCHAR(100) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    created_by INT UNSIGNED NOT NULL,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_by INT UNSIGNED NOT NULL,
-    PRIMARY KEY(id),
-	FOREIGN KEY(created_by) REFERENCES users(id) ON UPDATE CASCADE,
-	FOREIGN KEY(updated_by) REFERENCES users(id) ON UPDATE CASCADE
-);
+-- CREATE TABLE reequalization_reasons (
+-- 	id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+--     -- cukup gak 100
+-- 	reason VARCHAR(100) NOT NULL,
+--     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+--     created_by INT UNSIGNED NOT NULL,
+--     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+--     updated_by INT UNSIGNED NOT NULL,
+--     PRIMARY KEY(id),
+-- 	FOREIGN KEY(created_by) REFERENCES users(id) ON UPDATE CASCADE,
+-- 	FOREIGN KEY(updated_by) REFERENCES users(id) ON UPDATE CASCADE
+-- );
 
-CREATE TABLE diploma_reequalizations (
-	id INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	result_id INT UNSIGNED NOT NULL,
-	reequalization_reason_id INT UNSIGNED NOT NULL,
-	study_level_id INT UNSIGNED NOT NULL,
-    -- harus diisi?
-    comments TEXT NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    created_by INT UNSIGNED NOT NULL,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_by INT UNSIGNED NOT NULL,
-    PRIMARY KEY(id),
-	FOREIGN KEY(created_by) REFERENCES users(id) ON UPDATE CASCADE,
-	FOREIGN KEY(updated_by) REFERENCES users(id) ON UPDATE CASCADE,
-	FOREIGN KEY(result_id) REFERENCES results(id) ON UPDATE CASCADE,
-	FOREIGN KEY(reequalization_reason_id) REFERENCES reequalization_reasons(id) ON UPDATE CASCADE,
-	FOREIGN KEY(study_level_id) REFERENCES study_levels(id) ON UPDATE CASCADE
-);
+-- CREATE TABLE diploma_reequalizations (
+-- 	id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+-- 	result_id INT UNSIGNED NOT NULL,
+-- 	reequalization_reason_id INT UNSIGNED NOT NULL,
+-- 	study_level_id INT UNSIGNED NOT NULL,
+--     -- harus diisi?
+--     comments TEXT NOT NULL,
+--     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+--     created_by INT UNSIGNED NOT NULL,
+--     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+--     updated_by INT UNSIGNED NOT NULL,
+--     PRIMARY KEY(id),
+-- 	FOREIGN KEY(created_by) REFERENCES users(id) ON UPDATE CASCADE,
+-- 	FOREIGN KEY(updated_by) REFERENCES users(id) ON UPDATE CASCADE,
+-- 	FOREIGN KEY(result_id) REFERENCES results(id) ON UPDATE CASCADE,
+-- 	FOREIGN KEY(reequalization_reason_id) REFERENCES reequalization_reasons(id) ON UPDATE CASCADE,
+-- 	FOREIGN KEY(study_level_id) REFERENCES study_levels(id) ON UPDATE CASCADE
+-- );
 
 CREATE TABLE diploma_equalizations (
 	id INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -847,23 +824,18 @@ CREATE TABLE diploma_equalizations (
     academic_certificate_date DATE NOT NULL,
     start_collage DATE NOT NULL,
     end_collage DATE NOT NULL,
-    -- bisa lebih dari 9999 > ?
-    length_of_stay INT NOT NULL,
-    -- Harus text ?
+    length_of_stay INT NOT NULL,  -- in month
     thesis_title TEXT NOT NULL,
 	academic_record_id INT UNSIGNED NOT NULL,
 	job_id INT UNSIGNED NOT NULL,
 	score_conversion_id INT UNSIGNED NOT NULL,
     submission_date DATE NOT NULL,
-    -- default 0 / empty
-    verification_count TINYINT,
-	-- default 0 / empty
-    evaluation_count TINYINT,
-	-- default 0 / empty
-    validation_count TINYINT,
+    verification_count TINYINT DEFAULT 0,
+    evaluation_count TINYINT DEFAULT 0,
+    validation_count TINYINT DEFAULT 0,
 	parent_proposal_id INT UNSIGNED NOT NULL,
 	prev_proposal_id INT UNSIGNED NOT NULL,
-    is_draft TINYINT NOT NULL,
+    status_id INT UNSIGNED NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     created_by INT UNSIGNED NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -884,33 +856,9 @@ CREATE TABLE diploma_equalizations (
 	FOREIGN KEY(job_id) REFERENCES jobs(id) ON UPDATE CASCADE,
 	FOREIGN KEY(score_conversion_id) REFERENCES score_conversions(id) ON UPDATE CASCADE,
 	FOREIGN KEY(parent_proposal_id) REFERENCES diploma_equalizations(id) ON UPDATE CASCADE,
-	FOREIGN KEY(prev_proposal_id) REFERENCES diploma_equalizations(id) ON UPDATE CASCADE
-);
-
-CREATE TABLE conversion_score (
-	id INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    upper_score FLOAT UNSIGNED NOT NULL,
-    lower_score FLOAT UNSIGNED NOT NULL,
-    predicate VARCHAR(50) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    created_by INT UNSIGNED NOT NULL,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_by INT UNSIGNED NOT NULL,
-    PRIMARY KEY(id),
-	FOREIGN KEY(created_by) REFERENCES users(id) ON UPDATE CASCADE,
-	FOREIGN KEY(updated_by) REFERENCES users(id) ON UPDATE CASCADE
-);
-
-CREATE TABLE statuses (
-	id INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    name VARCHAR(100) NOT NULL UNIQUE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    created_by INT UNSIGNED NOT NULL,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_by INT UNSIGNED NOT NULL,
-    PRIMARY KEY(id),
-	FOREIGN KEY(created_by) REFERENCES users(id) ON UPDATE CASCADE,
-	FOREIGN KEY(updated_by) REFERENCES users(id) ON UPDATE CASCADE
+	FOREIGN KEY(prev_proposal_id) REFERENCES diploma_equalizations(id) ON UPDATE CASCADE,
+	FOREIGN KEY(status_id) REFERENCES statuses(id) ON UPDATE CASCADE
+    
 );
 
 CREATE TABLE evaluations (
@@ -920,9 +868,7 @@ CREATE TABLE evaluations (
 	speciality_id INT UNSIGNED NOT NULL,
 	study_level_id INT UNSIGNED NOT NULL,
     evaluation_date DATE NOT NULL,
-    -- buat nullable ?
     comment TEXT,
-    status TINYINT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     created_by INT UNSIGNED NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -940,8 +886,7 @@ CREATE TABLE evaluator_opinions (
 	id INT UNSIGNED NOT NULL AUTO_INCREMENT,
 	user_id INT UNSIGNED NOT NULL,
 	diploma_equalization_id INT UNSIGNED NOT NULL,
-    -- buat nullable?
-    comment TEXT,
+    `comment` TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     created_by INT UNSIGNED NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -957,7 +902,6 @@ CREATE TABLE fields (
 	id INT UNSIGNED NOT NULL AUTO_INCREMENT,
     label VARCHAR(100) NOT NULL UNIQUE,
     input_name VARCHAR(100) NOT NULL UNIQUE,
-    -- nullable ?
     hint VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     created_by INT UNSIGNED NOT NULL,
@@ -973,8 +917,7 @@ CREATE TABLE verifications (
 	user_id INT UNSIGNED NOT NULL,
     ref_table VARCHAR(100) NOT NULL,
     ref_id INT UNSIGNED NOT NULL,
-    status TINYINT NOT NULL,
-	-- nullable ?
+    status_id INT UNSIGNED NOT NULL,
     comment TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     created_by INT UNSIGNED NOT NULL,
@@ -983,7 +926,8 @@ CREATE TABLE verifications (
     PRIMARY KEY(id),
 	FOREIGN KEY(created_by) REFERENCES users(id) ON UPDATE CASCADE,
 	FOREIGN KEY(updated_by) REFERENCES users(id) ON UPDATE CASCADE,
-	FOREIGN KEY(user_id) REFERENCES users(id) ON UPDATE CASCADE
+	FOREIGN KEY(user_id) REFERENCES users(id) ON UPDATE CASCADE,
+	FOREIGN KEY(status_id) REFERENCES statuses(id) ON UPDATE CASCADE
 );
 
 CREATE TABLE verification_fields (
@@ -991,8 +935,7 @@ CREATE TABLE verification_fields (
 	verification_id INT UNSIGNED NOT NULL,
 	field_id INT UNSIGNED NOT NULL,
     is_verified TINYINT DEFAULT 0,
-    -- ini gimana?
-    flag INT NOT NULL,
+    is_correct TINYINT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     created_by INT UNSIGNED NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -1010,7 +953,6 @@ CREATE TABLE validations (
 	ref_table VARCHAR(100) NOT NULL,
     ref_id INT UNSIGNED NOT NULL,
     status TINYINT NOT NULL,
-    -- nullable ?
     comment TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     created_by INT UNSIGNED NOT NULL,
@@ -1027,8 +969,7 @@ CREATE TABLE validations_fields (
 	validation_id INT UNSIGNED NOT NULL,
 	field_id INT UNSIGNED NOT NULL,
     is_verified TINYINT DEFAULT 0,
-    -- ini gimana?
-    flag INT NOT NULL,
+	is_correct TINYINT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     created_by INT UNSIGNED NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -1058,7 +999,6 @@ CREATE TABLE field_comments (
 	id INT UNSIGNED NOT NULL AUTO_INCREMENT,
 	field_id INT UNSIGNED NOT NULL,
 	user_id INT UNSIGNED NOT NULL,
-    -- nullable? 
     comment TEXT,
 	ref_table VARCHAR(100) NOT NULL,
     ref_id INT UNSIGNED NOT NULL,
