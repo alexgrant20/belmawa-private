@@ -1012,3 +1012,36 @@ CREATE TABLE field_comments (
 	FOREIGN KEY(field_id) REFERENCES fields(id) ON UPDATE CASCADE,
 	FOREIGN KEY(user_id) REFERENCES users(id) ON UPDATE CASCADE
 );
+
+
+CREATE TABLE announcements (
+	id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    title VARCHAR(255) NOT NULL,
+    content TEXT NOT NULL,
+    is_active TINYINT DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT UNSIGNED NOT NULL,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_by INT UNSIGNED NOT NULL,
+    PRIMARY KEY(id),
+	FOREIGN KEY(created_by) REFERENCES users(id) ON UPDATE CASCADE,
+	FOREIGN KEY(updated_by) REFERENCES users(id) ON UPDATE CASCADE
+);
+
+CREATE TABLE predicates (
+	id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+	institution_study_program_id INT UNSIGNED NOT NULL,
+	study_level_id INT UNSIGNED NOT NULL,
+    lower_score	 FLOAT UNSIGNED NOT NULL,
+    upper_score	 FLOAT UNSIGNED NOT NULL,
+    predicate VARCHAR(50) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT UNSIGNED NOT NULL,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_by INT UNSIGNED NOT NULL,
+    PRIMARY KEY(id),
+	FOREIGN KEY(created_by) REFERENCES users(id) ON UPDATE CASCADE,
+	FOREIGN KEY(updated_by) REFERENCES users(id) ON UPDATE CASCADE,
+	FOREIGN KEY(institution_study_program_id) REFERENCES institution_study_programs(id) ON UPDATE CASCADE,
+	FOREIGN KEY(study_level_id) REFERENCES study_levels(id) ON UPDATE CASCADE
+);
