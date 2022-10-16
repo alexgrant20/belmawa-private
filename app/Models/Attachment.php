@@ -26,8 +26,8 @@ class Attachment extends Model
     return $this->hasMany(AttachmentUploadMapping::class);
   }
 
-  public function requiredDocument()
+  public function specialRequirements()
   {
-    return $this->hasMany(RequiredDocument::class);
+    return $this->hasMany(SpecialRequirements::class);
   }
 }

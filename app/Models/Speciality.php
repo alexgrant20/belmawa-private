@@ -25,4 +25,9 @@ class Speciality extends Model
   {
     return $this->hasMany(Result::class);
   }
+
+  public function evaluation()
+  {
+    return $this->hasMany(Evaluation::class);
+  }
 }

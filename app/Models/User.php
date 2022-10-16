@@ -75,6 +75,11 @@ class User extends Authenticatable
     return $this->hasMany(UserScoreConversion::class);
   }
 
+  public function userLogin()
+  {
+    return $this->hasMany(UserLogin::class);
+  }
+
   // tidak jelas
   public function serviceLevelAgreements()
   {

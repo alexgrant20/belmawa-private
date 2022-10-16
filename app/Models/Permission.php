@@ -16,8 +16,8 @@ class Permission extends Model
     return $this->hasMany(RolePermissions::class);
   }
 
-  public function menu()
+  public function menuPermission()
   {
-    return $this->hasMany(Menu::class);
+    return $this->hasMany(MenuPermissions::class);
   }
 }

@@ -26,10 +26,10 @@ class Result extends Model
     return $this->belongsTo(StudyLevel::class);
   }
 
-  public function diplomaReequalization()
-  {
-    return $this->hasMany(DiplomaReequalization::class);
-  }
+  // public function diplomaReequalization()
+  // {
+  //   return $this->hasMany(DiplomaReequalization::class);
+  // }
 
   public function conversionResult()
   {

@@ -20,4 +20,9 @@ class Validation extends Model
   {
     return $this->hasMany(ValidationField::class);
   }
+
+  public function status()
+  {
+    return $this->belongsTo(Status::class);
+  }
 }

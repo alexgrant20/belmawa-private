@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class InstitutionProposal extends Model
+class UserLogin extends Model
 {
   use HasFactory;
 
@@ -14,15 +14,5 @@ class InstitutionProposal extends Model
   public function user()
   {
     return $this->belongsTo(User::class);
-  }
-
-  public function country()
-  {
-    return $this->belongsTo(Country::class);
-  }
-
-  public function institutionType()
-  {
-    return $this->belongsTo(InstitutionType::class);
   }
 }

@@ -20,4 +20,9 @@ class Verification extends Model
   {
     return $this->hasMany(verificationField::class);
   }
+
+  public function status()
+  {
+    return $this->belongsTo(Status::class);
+  }
 }

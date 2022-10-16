@@ -5,19 +5,19 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Profile extends Model
+class MenuPermissions extends Model
 {
   use HasFactory;
 
   public $guarded = ['id'];
 
-  public function user()
+  public function menu()
   {
-    return $this->belongsTo(User::class);
+    return $this->belongsTo(Menu::class);
   }
 
-  public function nationality()
+  public function permission()
   {
-    return $this->belongsTo(Nationality::class);
+    return $this->belongsTo(Permission::class);
   }
 }

@@ -25,4 +25,9 @@ class ScoreConversion extends Model
   {
     return $this->hasOne(DiplomaEqualization::class);
   }
+
+  public function status()
+  {
+    return $this->belongsTo(Status::class);
+  }
 }

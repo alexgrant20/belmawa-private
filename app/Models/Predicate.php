@@ -5,14 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class MenuGroup extends Model
+class Predicate extends Model
 {
   use HasFactory;
 
   public $guarded = ['id'];
 
-  public function menu()
+  public function conversionResult()
   {
-    return $this->hasMany(Menu::class);
+    return $this->hasMany(ConversionResult::class);
   }
 }

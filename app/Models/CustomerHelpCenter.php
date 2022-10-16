@@ -5,14 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class RequiredDocument extends Model
+class CustomerHelpCenter extends Model
 {
   use HasFactory;
 
   public $guarded = ['id'];
-
-  public function attachment()
-  {
-    return $this->belongsTo(Attachment::class);
-  }
 }

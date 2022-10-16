@@ -21,11 +21,6 @@ class StudyLevel extends Model
     return $this->hasMany(AcademicRecord::class);
   }
 
-  public function userScoreConversion()
-  {
-    return $this->hasMany(UserScoreConversion::class);
-  }
-
   public function diplomaEqualization()
   {
     return $this->hasMany(DiplomaEqualization::class);
@@ -39,5 +34,10 @@ class StudyLevel extends Model
   public function diplomaReequalization()
   {
     return $this->hasMany(DiplomaReequalization::class);
+  }
+
+  public function predicate()
+  {
+    return $this->hasMany(Predicate::class);
   }
 }

@@ -5,14 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class TuitionType extends Model
+class SpecialRequirements extends Model
 {
   use HasFactory;
 
   public $guarded = ['id'];
 
-  public function diplomaEqualization()
+  public function attachment()
   {
-    return $this->hasMany(DiplomaEqualization::class);
+    return $this->belongsTo(Attachment::class);
   }
 }

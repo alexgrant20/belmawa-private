@@ -25,4 +25,24 @@ class InstitutionStudyProgram extends Model
   {
     return $this->belongsTo(Degree::class);
   }
+
+  public function academicRecord()
+  {
+    return $this->hasMany(AcademicRecord::class);
+  }
+
+  public function diplomaEqualization()
+  {
+    return $this->hasMany(DiplomaEqualization::class);
+  }
+
+  public function userScoreConversion()
+  {
+    return $this->hasMany(UserScoreConversion::class);
+  }
+
+  public function predicate()
+  {
+    return $this->hasMany(Predicate::class);
+  }
 }

@@ -46,9 +46,9 @@ class DiplomaEqualization extends Model
     return $this->belongsTo(StudyMode::class);
   }
 
-  public function tuitionType()
+  public function tuitionPayment()
   {
-    return $this->belongsTo(TuitionType::class);
+    return $this->belongsTo(TuitionPayment::class);
   }
 
   public function learningProgram()
@@ -69,6 +69,11 @@ class DiplomaEqualization extends Model
   public function scoreConversion()
   {
     return $this->belongsTo(scoreConversion::class);
+  }
+
+  public function status()
+  {
+    return $this->belongsTo(Status::class);
   }
 
   public function evaluatorOpinion()

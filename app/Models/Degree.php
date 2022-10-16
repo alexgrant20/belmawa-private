@@ -16,11 +16,6 @@ class Degree extends Model
     return $this->hasMany(DiplomaEqualization::class);
   }
 
-  public function institutionStudyProgram()
-  {
-    return $this->hasMany(InstitutionStudyProgram::class);
-  }
-
   public function studyProgramProposal()
   {
     return $this->hasMany(StudyProgramProposal::class);
